@@ -9,6 +9,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Kutuyu ve yazıyı birlikte taşıyan container */
+.container {
+  position: relative;
 }
 
 .scene {
@@ -47,6 +54,37 @@ body {
     inset 0 0 10px rgb(255, 0, 0),
     0 0 10px rgb(255, 0, 0);
   animation: rgbBorder 2000ms linear infinite;
+}
+
+/* Instruction kartı */
+#click-hint {
+  position: absolute;
+  bottom: 100%; /* Kutunun üstünde */
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 18px;
+
+  padding: 8px 14px;
+  
+  border-radius: 8px;
+  border: 1px solid #bbb;
+
+  font-size: 16px;
+  color: #d1d1d1;
+  font-weight: 800;
+
+  text-shadow: 0 0 5px rgba(255,255,255,0.3);
+
+
+  animation: hintFloat 1.3s ease-in-out infinite;
+  transition: opacity 0.2s ease;
+}
+
+/* Kart animasyonu — SADECE hareket, opacity yok */
+@keyframes hintFloat {
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(-4px); }
+  100% { transform: translateX(-50%) translateY(0); }
 }
 
 /* Yüzler */
@@ -91,35 +129,44 @@ body {
 </head>
 <body>
 
+<!-- Instruction kartı + sahne bir arada -->
+<div class="container">
+
+  <div id="click-hint">⬇Tıkla⬇</div>
+
+  <div class="scene">
+    <div class="cube-wrapper paused">
+      <div class="cube paused">
+        <div class="front"></div>
+        <div class="back"></div>
+        <div class="right"></div>
+        <div class="left"></div>
+        <div class="top"></div>
+        <div class="bottom"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <!-- Arka plan müzik -->
 <audio id="bgm" src="funkytown.mp3" loop></audio>
 
-<div class="scene">
-  <!-- BAŞTA paused class'ı ekliyoruz -->
-  <div class="cube-wrapper paused">
-    <div class="cube paused">
-      <div class="front"></div>
-      <div class="back"></div>
-      <div class="right"></div>
-      <div class="left"></div>
-      <div class="top"></div>
-      <div class="bottom"></div>
-    </div>
-  </div>
-</div>
-
 <script>
-// TIKLAMA → müzik + animasyon aynı anda başlasın
+// TIKLAMA → yazı kaybolur + müzik başlar + animasyonlar aktif olur
 window.addEventListener('click', function () {
+
+  // Müzik
   const audio = document.getElementById('bgm');
   audio.play().catch(() => {});
 
-  const wrapper = document.querySelector('.cube-wrapper');
-  const cube    = document.querySelector('.cube');
+  // Animasyonlar
+  document.querySelector('.cube-wrapper').classList.remove('paused');
+  document.querySelector('.cube').classList.remove('paused');
 
-  // paused class'ını kaldır → animasyonlar çalışmaya başlasın
-  wrapper.classList.remove('paused');
-  cube.classList.remove('paused');
+  // Instruction kartını yok et
+  const hint = document.getElementById("click-hint");
+  hint.style.opacity = 0;
 
 }, { once: true });
 </script>
