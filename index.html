@@ -17,6 +17,11 @@ body {
   perspective: 800px;
 }
 
+/* Başlangıçta animasyonu kilitleyen class */
+.paused {
+  animation-play-state: paused !important;
+}
+
 .cube-wrapper {
   animation: float 983.606ms ease-in-out infinite;
 }
@@ -27,7 +32,6 @@ body {
   position: relative;
   transform-style: preserve-3d;
   animation: spin 1967.212ms linear infinite;
-  lighting-color: rgb(255, 250, 250);
 }
 
 .cube div {
@@ -45,52 +49,42 @@ body {
   animation: rgbBorder 2000ms linear infinite;
 }
 
-/* Küp yüzleri */
-.front  { transform: rotateY(  0deg) translateZ(100px); }
+/* Yüzler */
+.front  { transform: rotateY(0deg) translateZ(100px); }
 .back   { transform: rotateY(180deg) translateZ(100px); }
-.right  { transform: rotateY( 90deg) translateZ(100px); }
+.right  { transform: rotateY(90deg) translateZ(100px); }
 .left   { transform: rotateY(-90deg) translateZ(100px); }
-.top    { transform: rotateX( 90deg) translateZ(100px); }
+.top    { transform: rotateX(90deg) translateZ(100px); }
 .bottom { transform: rotateX(-90deg) translateZ(100px); }
 
-/* Dönme animasyonu */
+/* Animasyonlar */
 @keyframes spin {
   from { transform: rotateX(0deg) rotateY(360deg); }
   to   { transform: rotateX(360deg) rotateY(0deg); }
 }
 
-/* Yukarı-aşağı salınım */
 @keyframes float {
   0%   { transform: translateY(80px); }
   50%  { transform: translateY(-80px); }
   100% { transform: translateY(80px); }
 }
 
-/* RGB kenar animasyonu */
 @keyframes rgbBorder {
   0% {
     border-color: rgb(255, 0, 0);
-    box-shadow:
-      inset 0 0 10px rgb(255, 0, 0),
-      0 0 10px rgb(255, 0, 0);
+    box-shadow: inset 0 0 10px rgb(255, 0, 0), 0 0 10px rgb(255, 0, 0);
   }
   33% {
     border-color: rgb(0, 255, 0);
-    box-shadow:
-      inset 0 0 10px rgb(0, 255, 0),
-      0 0 10px rgb(0, 255, 0);
+    box-shadow: inset 0 0 10px rgb(0, 255, 0), 0 0 10px rgb(0, 255, 0);
   }
   66% {
     border-color: rgb(0, 0, 255);
-    box-shadow:
-      inset 0 0 10px rgb(0, 0, 255),
-      0 0 10px rgb(0, 0, 255);
+    box-shadow: inset 0 0 10px rgb(0, 0, 255), 0 0 10px rgb(0, 0, 255);
   }
   100% {
     border-color: rgb(255, 0, 0);
-    box-shadow:
-      inset 0 0 10px rgb(255, 0, 0),
-      0 0 10px rgb(255, 0, 0);
+    box-shadow: inset 0 0 10px rgb(255, 0, 0), 0 0 10px rgb(255, 0, 0);
   }
 }
 </style>
@@ -101,8 +95,9 @@ body {
 <audio id="bgm" src="funkytown.mp3" loop></audio>
 
 <div class="scene">
-  <div class="cube-wrapper">
-    <div class="cube">
+  <!-- BAŞTA paused class'ı ekliyoruz -->
+  <div class="cube-wrapper paused">
+    <div class="cube paused">
       <div class="front"></div>
       <div class="back"></div>
       <div class="right"></div>
@@ -114,12 +109,18 @@ body {
 </div>
 
 <script>
-// İlk tıklamada müziği başlat (autoplay engeline takılmasın)
+// TIKLAMA → müzik + animasyon aynı anda başlasın
 window.addEventListener('click', function () {
   const audio = document.getElementById('bgm');
-  if (audio.paused) {
-    audio.play().catch(() => {});
-  }
+  audio.play().catch(() => {});
+
+  const wrapper = document.querySelector('.cube-wrapper');
+  const cube    = document.querySelector('.cube');
+
+  // paused class'ını kaldır → animasyonlar çalışmaya başlasın
+  wrapper.classList.remove('paused');
+  cube.classList.remove('paused');
+
 }, { once: true });
 </script>
 
